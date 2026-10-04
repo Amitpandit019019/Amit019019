@@ -2,132 +2,198 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Earbuds Control</title>
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1">
+
+<title>Nepal Bus GPS Fare Meter</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
-* {
-  box-sizing: border-box;
+
+*{
+ box-sizing:border-box;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #101114;
-  color: white;
+body{
+ margin:0;
+ background:#eef2f5;
+ font-family:Arial,sans-serif;
+ color:#172027;
 }
 
-.app {
-  max-width: 430px;
-  margin: auto;
-  padding: 24px 18px 35px;
+.app{
+ width:100%;
+ max-width:540px;
+ margin:auto;
+ padding:10px;
 }
 
-h1 {
-  text-align: center;
-  margin: 8px 0 5px;
-  font-size: 28px;
+.card{
+ background:white;
+ border-radius:22px;
+ padding:15px;
+ box-shadow:0 4px 18px #0002;
 }
 
-.sub {
-  text-align: center;
-  color: #9da0a8;
-  margin-bottom: 25px;
+.header{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
 }
 
-.card {
-  background: #1b1d22;
-  border: 1px solid #2b2e35;
-  border-radius: 22px;
-  padding: 20px;
-  margin-bottom: 15px;
+.title{
+ font-size:20px;
+ font-weight:800;
 }
 
-.earbuds {
-  display: flex;
-  justify-content: space-around;
-  padding: 15px 0 22px;
+.badge{
+ font-size:11px;
+ padding:6px 9px;
+ border-radius:20px;
+ background:#eef2f4;
 }
 
-.bud {
-  width: 95px;
-  height: 125px;
-  background: #eee;
-  border-radius: 45px 45px 35px 35px;
-  position: relative;
+.fareLabel{
+ text-align:center;
+ color:#65727b;
+ font-size:11px;
+ margin-top:15px;
 }
 
-.bud:after {
-  content: "";
-  position: absolute;
-  width: 28px;
-  height: 65px;
-  background: #eee;
-  bottom: -42px;
-  left: 34px;
-  border-radius: 0 0 18px 18px;
+.fare{
+ text-align:center;
+ font-size:50px;
+ font-weight:900;
+ margin:0;
 }
 
-.bud span {
-  position: absolute;
-  color: #111;
-  font-weight: bold;
-  top: 48px;
-  left: 38px;
+.status{
+ text-align:center;
+ font-size:13px;
+ font-weight:bold;
+ margin:6px 0 10px;
 }
 
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+.status.ok{
+ color:#087a4b;
 }
 
-.value {
-  color: #9fe7ff;
-  font-weight: bold;
+.status.warn{
+ color:#b05a00;
 }
 
-input[type="range"] {
-  width: 100%;
-  accent-color: #62d9ff;
-  height: 6px;
+.status.bad{
+ color:#b42318;
 }
 
-button {
-  border: 0;
-  border-radius: 14px;
-  padding: 13px 18px;
-  background: #62d9ff;
-  color: #071014;
-  font-weight: bold;
-  font-size: 15px;
+#map{
+ height:245px;
+ width:100%;
+ border-radius:16px;
+ overflow:hidden;
 }
 
-.buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
+.grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+ margin-top:10px;
 }
 
-button.secondary {
-  background: #292c33;
-  color: white;
+.box{
+ background:#f5f7f8;
+ border:1px solid #e0e4e7;
+ border-radius:13px;
+ padding:10px;
+ text-align:center;
 }
 
-.status {
-  text-align: center;
-  color: #71e6a3;
-  margin-top: 14px;
-  font-size: 14px;
+.value{
+ font-size:18px;
+ font-weight:800;
 }
 
-.small {
-  font-size: 12px;
-  color: #898d96;
-  line-height: 1.5;
-  margin-top: 15px;
+.label{
+ font-size:10px;
+ color:#6b767d;
+ margin-top:3px;
 }
+
+.next{
+ background:#172027;
+ color:white;
+ border-radius:13px;
+ text-align:center;
+ padding:11px;
+ margin-top:10px;
+ font-size:13px;
+}
+
+.buttons{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+ margin-top:10px;
+}
+
+button{
+ border:0;
+ min-height:52px;
+ border-radius:13px;
+ font-size:15px;
+ font-weight:800;
+ background:#172027;
+ color:#fff;
+}
+
+button.secondary{
+ background:#e8ecef;
+ color:#172027;
+}
+
+button:disabled{
+ opacity:.55;
+}
+
+.help{
+ background:#fff8e8;
+ border:1px solid #f0d99b;
+ border-radius:13px;
+ padding:10px;
+ margin-top:10px;
+ font-size:12px;
+ line-height:1.45;
+ display:none;
+}
+
+.details{
+ margin-top:10px;
+ border:1px solid #e0e4e7;
+ border-radius:13px;
+ overflow:hidden;
+}
+
+.detail{
+ display:flex;
+ justify-content:space-between;
+ padding:8px 10px;
+ font-size:12px;
+ border-bottom:1px solid #eee;
+}
+
+.detail:last-child{
+ border:0;
+}
+
+.note{
+ color:#6b767d;
+ font-size:10px;
+ line-height:1.45;
+ margin-top:10px;
+}
+
 </style>
 </head>
 
@@ -135,199 +201,869 @@ button.secondary {
 
 <div class="app">
 
-<h1>🎧 Earbuds Control</h1>
-<div class="sub">Left & Right Audio Control</div>
-
 <div class="card">
 
-<div class="earbuds">
-  <div class="bud"><span>L</span></div>
-  <div class="bud"><span>R</span></div>
+<div class="header">
+
+<div class="title">
+🇳🇵 Nepal Bus Fare Meter
 </div>
 
-<div class="row">
-  <b>Left Volume</b>
-  <span class="value" id="lv">50%</span>
+<div class="badge">
+GPS V2
 </div>
-
-<input id="left" type="range" min="0" max="100" value="50">
-
-<br><br>
-
-<div class="row">
-  <b>Right Volume</b>
-  <span class="value" id="rv">50%</span>
-</div>
-
-<input id="right" type="range" min="0" max="100" value="50">
 
 </div>
 
 
-<div class="card">
-
-<div class="row">
-  <b>Master Volume</b>
-  <span class="value" id="mv">70%</span>
+<div class="fareLabel">
+CURRENT FARE
 </div>
 
-<input id="master" type="range" min="0" max="100" value="70">
-
-<br><br>
-
-<div class="row">
-  <b>Balance</b>
-  <span class="value" id="bv">Center</span>
-</div>
-
-<input id="balance" type="range" min="-100" max="100" value="0">
-
-</div>
-
-
-<div class="card">
-
-<div class="buttons">
-
-<button id="test">
-▶ Test Sound
-</button>
-
-<button class="secondary" id="reset">
-Reset
-</button>
-
+<div class="fare" id="fare">
+Rs 0.00
 </div>
 
 <div class="status" id="status">
-Ready
+Ready — press Start GPS
 </div>
 
-<div class="small">
-This demo controls audio generated by the webpage.
-A normal browser cannot directly change the physical
-left/right hardware volume of arbitrary Bluetooth earbuds.
+
+<div id="map"></div>
+
+
+<div class="grid">
+
+<div class="box">
+
+<div class="value" id="distance">
+0 m
+</div>
+
+<div class="label">
+DISTANCE
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="value" id="speed">
+0 km/h
+</div>
+
+<div class="label">
+SPEED
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="value" id="steps">
+0
+</div>
+
+<div class="label">
+50 m STEPS
+</div>
+
+</div>
+
+
+<div class="box">
+
+<div class="value" id="accuracy">
+—
+</div>
+
+<div class="label">
+GPS ACCURACY
 </div>
 
 </div>
 
 </div>
 
+
+<div class="next" id="next">
+Next fare change: 50 m
+</div>
+
+
+<div class="buttons">
+
+<button id="start">
+📍 Start GPS
+</button>
+
+<button id="reset" class="secondary">
+↺ Reset
+</button>
+
+</div>
+
+
+<div class="help" id="help"></div>
+
+
+<div class="details">
+
+<div class="detail">
+<span>0–5 km</span>
+<b>Rs 24</b>
+</div>
+
+<div class="detail">
+<span>5–10 km</span>
+<b>Rs 33</b>
+</div>
+
+<div class="detail">
+<span>10–15 km</span>
+<b>Rs 39</b>
+</div>
+
+<div class="detail">
+<span>15–20 km</span>
+<b>Rs 44</b>
+</div>
+
+<div class="detail">
+<span>Above 20 km</span>
+<b>Rs 50</b>
+</div>
+
+</div>
+
+
+<div class="note">
+GPS distance is based on your phone's real location.
+Small GPS errors are filtered to reduce false distance.
+This is a fare-calculator demo and is not an officially
+certified public-transport meter.
+</div>
+
+</div>
+</div>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
-const left = document.getElementById("left");
-const right = document.getElementById("right");
-const master = document.getElementById("master");
-const balance = document.getElementById("balance");
-
-const lv = document.getElementById("lv");
-const rv = document.getElementById("rv");
-const mv = document.getElementById("mv");
-const bv = document.getElementById("bv");
-
-const status = document.getElementById("status");
-
-
-function update() {
-
-  lv.textContent = left.value + "%";
-  rv.textContent = right.value + "%";
-  mv.textContent = master.value + "%";
-
-  let b = Number(balance.value);
-
-  if (b === 0) {
-    bv.textContent = "Center";
-  }
-
-  else if (b < 0) {
-    bv.textContent = "Left " + Math.abs(b) + "%";
-  }
-
-  else {
-    bv.textContent = "Right " + b + "%";
-  }
-}
-
-
-[left, right, master, balance].forEach(
-  slider => slider.addEventListener("input", update)
+const map =
+L.map("map").setView(
+ [27.7172,85.3240],
+ 13
 );
 
 
-document.getElementById("reset").onclick = function() {
-
-  left.value = 50;
-  right.value = 50;
-  master.value = 70;
-  balance.value = 0;
-
-  update();
-
-  status.textContent = "Settings reset";
-};
+L.tileLayer(
+ "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+ {
+  maxZoom:19,
+  attribution:"© OpenStreetMap contributors"
+ }
+).addTo(map);
 
 
-document.getElementById("test").onclick = async function() {
+let watchId = null;
 
-  const AudioContext =
-    window.AudioContext || window.webkitAudioContext;
+let last = null;
 
-  if (!AudioContext) {
+let total = 0;
 
-    status.textContent =
-      "Audio not supported";
+let marker = null;
 
-    return;
+let circle = null;
+
+let route = null;
+
+let routePoints = [];
+
+
+const fareEl =
+document.getElementById("fare");
+
+const statusEl =
+document.getElementById("status");
+
+const distanceEl =
+document.getElementById("distance");
+
+const speedEl =
+document.getElementById("speed");
+
+const stepsEl =
+document.getElementById("steps");
+
+const accuracyEl =
+document.getElementById("accuracy");
+
+const nextEl =
+document.getElementById("next");
+
+const startBtn =
+document.getElementById("start");
+
+const helpEl =
+document.getElementById("help");
+
+
+function setStatus(text,type=""){
+
+ statusEl.textContent = text;
+
+ statusEl.className =
+ "status " + type;
+
+}
+
+
+function showHelp(text){
+
+ helpEl.textContent = text;
+
+ helpEl.style.display =
+ "block";
+
+}
+
+
+function hideHelp(){
+
+ helpEl.style.display =
+ "none";
+
+}
+
+
+/* Calculate GPS distance */
+
+function distanceBetween(a,b){
+
+ const R = 6371000;
+
+ const p = Math.PI / 180;
+
+ const dLat =
+ (b.lat-a.lat)*p;
+
+ const dLon =
+ (b.lon-a.lon)*p;
+
+ const x =
+ Math.sin(dLat/2)**2 +
+ Math.cos(a.lat*p) *
+ Math.cos(b.lat*p) *
+ Math.sin(dLon/2)**2;
+
+ return 2 * R *
+ Math.atan2(
+  Math.sqrt(x),
+  Math.sqrt(1-x)
+ );
+
+}
+
+
+/*
+EXACT 50 METRE FARE SYSTEM
+*/
+
+function getFare(steps){
+
+ if(steps <= 100){
+
+  return steps * 0.24;
+
+ }
+
+ if(steps <= 200){
+
+  return 24 +
+  (steps-100)*0.09;
+
+ }
+
+ if(steps <= 300){
+
+  return 33 +
+  (steps-200)*0.06;
+
+ }
+
+ if(steps <= 400){
+
+  return 39 +
+  (steps-300)*0.05;
+
+ }
+
+ return 50;
+
+}
+
+
+/* Update fare display */
+
+function updateMeter(){
+
+ const steps =
+ Math.floor(total / 50);
+
+ const fare =
+ getFare(steps);
+
+
+ fareEl.textContent =
+ "Rs " + fare.toFixed(2);
+
+
+ if(total < 1000){
+
+  distanceEl.textContent =
+  Math.round(total) + " m";
+
+ }else{
+
+  distanceEl.textContent =
+  (total/1000).toFixed(2) +
+  " km";
+
+ }
+
+
+ stepsEl.textContent =
+ steps;
+
+
+ if(steps >= 400){
+
+  nextEl.textContent =
+  "Maximum fare: Rs 50.00";
+
+ }else{
+
+  const remaining =
+  50 - (total % 50);
+
+  nextEl.textContent =
+  "Next fare change in " +
+  Math.ceil(remaining) +
+  " m";
+
+ }
+
+}
+
+
+/* Update map */
+
+function updateMap(
+ lat,
+ lon,
+ accuracy
+){
+
+ const point =
+ [lat,lon];
+
+
+ routePoints.push(
+  point
+ );
+
+
+ if(!route){
+
+  route =
+  L.polyline(
+   routePoints
+  ).addTo(map);
+
+ }else{
+
+  route.setLatLngs(
+   routePoints
+  );
+
+ }
+
+
+ if(!marker){
+
+  marker =
+  L.marker(point)
+  .addTo(map)
+  .bindPopup(
+   "Your current GPS location"
+  );
+
+  map.setView(
+   point,
+   16
+  );
+
+ }else{
+
+  marker.setLatLng(
+   point
+  );
+
+ }
+
+
+ if(!circle){
+
+  circle =
+  L.circle(
+   point,
+   {
+    radius:accuracy
+   }
+  ).addTo(map);
+
+ }else{
+
+  circle.setLatLng(
+   point
+  );
+
+  circle.setRadius(
+   accuracy
+  );
+
+ }
+
+}
+
+
+/* Successful GPS position */
+
+function gpsSuccess(position){
+
+ const lat =
+ position.coords.latitude;
+
+ const lon =
+ position.coords.longitude;
+
+ const accuracy =
+ position.coords.accuracy || 999;
+
+
+ const current = {
+  lat:lat,
+  lon:lon
+ };
+
+
+ accuracyEl.textContent =
+ "±" + Math.round(accuracy) + " m";
+
+
+ /* Ignore poor GPS */
+
+ if(accuracy > 80){
+
+  setStatus(
+   "GPS signal weak — waiting...",
+   "warn"
+  );
+
+  return;
+
+ }
+
+
+ /* First GPS position */
+
+ if(last === null){
+
+  last = current;
+
+  updateMap(
+   lat,
+   lon,
+   accuracy
+  );
+
+  setStatus(
+   "GPS active",
+   "ok"
+  );
+
+  updateMeter();
+
+  return;
+
+ }
+
+
+ /* Calculate movement */
+
+ const movement =
+ distanceBetween(
+  last,
+  current
+ );
+
+
+ /*
+ Reject huge GPS jumps.
+ */
+
+ if(movement > 150){
+
+  setStatus(
+   "GPS jump ignored",
+   "warn"
+  );
+
+  return;
+
+ }
+
+
+ /*
+ Ignore tiny GPS drift.
+ */
+
+ if(movement >= 8){
+
+  total += movement;
+
+  last = current;
+
+  updateMap(
+   lat,
+   lon,
+   accuracy
+  );
+
+ }
+
+
+ /* Speed */
+
+ if(
+  position.coords.speed !== null &&
+  position.coords.speed >= 0
+ ){
+
+  speedEl.textContent =
+  Math.round(
+   position.coords.speed * 3.6
+  ) + " km/h";
+
+ }
+
+
+ updateMeter();
+
+
+ setStatus(
+  "GPS active • accuracy ±" +
+  Math.round(accuracy) +
+  " m",
+  "ok"
+ );
+
+}
+
+
+/* GPS error */
+
+function gpsError(error){
+
+ watchId = null;
+
+ startBtn.textContent =
+ "📍 Start GPS";
+
+
+ if(error.code === 1){
+
+  setStatus(
+   "Location permission blocked",
+   "bad"
+  );
+
+  showHelp(
+   "Location permission was blocked. " +
+   "Open your browser site settings for this " +
+   "GitHub Pages website, allow Location, " +
+   "then press Start GPS again."
+  );
+
+ }
+
+
+ else if(error.code === 2){
+
+  setStatus(
+   "GPS location unavailable",
+   "bad"
+  );
+
+  showHelp(
+   "Your phone could not get a GPS position. " +
+   "Turn on Location/GPS and try again outdoors " +
+   "or near a window."
+  );
+
+ }
+
+
+ else if(error.code === 3){
+
+  setStatus(
+   "GPS timed out",
+   "warn"
+  );
+
+  showHelp(
+   "GPS took too long to respond. " +
+   "Keep Location enabled and press Start GPS again."
+  );
+
+ }
+
+}
+
+
+/* Check GPS support */
+
+function checkLocation(){
+
+ if(!navigator.geolocation){
+
+  setStatus(
+   "This browser does not support GPS",
+   "bad"
+  );
+
+  showHelp(
+   "Use Chrome, Safari, Firefox, " +
+   "or another modern browser."
+  );
+
+  return false;
+
+ }
+
+
+ /*
+ GPS requires HTTPS on normal websites.
+ */
+
+ const secure =
+ location.protocol === "https:" ||
+ location.hostname === "localhost" ||
+ location.hostname === "127.0.0.1";
+
+
+ if(!secure){
+
+  setStatus(
+   "HTTPS required for GPS",
+   "bad"
+  );
+
+  showHelp(
+   "Publish this file using GitHub Pages " +
+   "and open the HTTPS GitHub Pages address."
+  );
+
+  return false;
+
+ }
+
+
+ return true;
+
+}
+
+
+/* START / STOP GPS */
+
+startBtn.addEventListener(
+ "click",
+ function(){
+
+  hideHelp();
+
+
+  /* Stop GPS */
+
+  if(watchId !== null){
+
+   navigator.geolocation.clearWatch(
+    watchId
+   );
+
+   watchId = null;
+
+   last = null;
+
+   startBtn.textContent =
+   "📍 Start GPS";
+
+   setStatus(
+   "GPS stopped"
+   );
+
+   return;
+
   }
 
-  const ctx = new AudioContext();
 
-  const oscillator =
-    ctx.createOscillator();
+  if(!checkLocation()){
 
-  const gain =
-    ctx.createGain();
+   return;
 
-  const pan =
-    ctx.createStereoPanner();
-
-  oscillator.frequency.value = 440;
-
-  gain.gain.value =
-    (Number(master.value) / 100) * 0.15;
-
-  pan.pan.value =
-    Number(balance.value) / 100;
-
-  oscillator
-    .connect(gain)
-    .connect(pan)
-    .connect(ctx.destination);
-
-  oscillator.start();
-
-  status.textContent =
-    "Playing test sound...";
-
-  setTimeout(() => {
-
-    oscillator.stop();
-
-    ctx.close();
-
-    status.textContent =
-      "Ready";
-
-  }, 800);
-
-};
+  }
 
 
-update();
+  setStatus(
+   "Requesting location permission...",
+   "warn"
+  );
+
+
+  /*
+  First request a single position.
+  This gives the browser a clear
+  permission request.
+  */
+
+  navigator.geolocation.getCurrentPosition(
+
+   function(position){
+
+    gpsSuccess(position);
+
+
+    /*
+    Start continuous GPS tracking.
+    */
+
+    watchId =
+    navigator.geolocation.watchPosition(
+     gpsSuccess,
+     gpsError,
+     {
+      enableHighAccuracy:true,
+      maximumAge:1000,
+      timeout:15000
+     }
+    );
+
+
+    startBtn.textContent =
+    "⏸ Stop GPS";
+
+   },
+
+   gpsError,
+
+   {
+    enableHighAccuracy:true,
+    maximumAge:0,
+    timeout:15000
+   }
+
+  );
+
+ });
+
+
+/* RESET */
+
+document
+.getElementById("reset")
+.addEventListener(
+ "click",
+ function(){
+
+  total = 0;
+
+  last = null;
+
+  routePoints = [];
+
+
+  fareEl.textContent =
+  "Rs 0.00";
+
+  distanceEl.textContent =
+  "0 m";
+
+  speedEl.textContent =
+  "0 km/h";
+
+  stepsEl.textContent =
+  "0";
+
+  accuracyEl.textContent =
+  "—";
+
+  nextEl.textContent =
+  "Next fare change: 50 m";
+
+
+  if(route){
+
+   map.removeLayer(route);
+
+   route = null;
+
+  }
+
+
+  if(marker){
+
+   map.removeLayer(marker);
+
+   marker = null;
+
+  }
+
+
+  if(circle){
+
+   map.removeLayer(circle);
+
+   circle = null;
+
+  }
+
+
+  hideHelp();
+
+
+  if(watchId !== null){
+
+   setStatus(
+    "GPS active • trip reset",
+    "ok"
+   );
+
+  }else{
+
+   setStatus(
+    "Ready — press Start GPS"
+   );
+
+  }
+
+ });
 
 </script>
 
 </body>
-</html>
+  </html>
