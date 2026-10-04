@@ -1,1 +1,2331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
+<title>KTM Fare Meter • Everest Summit Coaching Classes</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#02070b;
+  color:white;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+button{
+  font:inherit;
+  color:white;
+}
+
+#map{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
+
+#map:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:500;
+
+  background:
+  linear-gradient(
+    180deg,
+    rgba(0,0,0,.62),
+    rgba(0,0,0,.05) 30%,
+    rgba(0,0,0,.05) 65%,
+    rgba(0,0,0,.72)
+  );
+}
+
+.leaflet-control-attribution,
+.leaflet-control-zoom{
+  display:none!important;
+}
+
+
+/* =========================
+   APP LAYER
+========================= */
+
+.phone{
+  position:fixed;
+  inset:0;
+  z-index:10;
+  pointer-events:none;
+}
+
+.phone>*{
+  pointer-events:auto;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.top{
+  position:absolute;
+  top:2.2%;
+  left:5.5%;
+  right:5.5%;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo{
+  width:70px;
+  height:70px;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:23px;
+
+  background:
+  linear-gradient(
+    145deg,
+    #ff2734,
+    #a7000c
+  );
+
+  border:1px solid #ff6670;
+
+  box-shadow:
+    0 8px 30px #ff183344,
+    inset 0 1px #fff7;
+
+  font-size:36px;
+}
+
+.brandTitle{
+  font-size:27px;
+  font-weight:900;
+
+  text-shadow:
+    0 2px 9px #000;
+}
+
+.brandSub{
+  margin-top:4px;
+  color:#d0dbe1;
+  font-size:15px;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  padding:12px 17px;
+
+  border-radius:28px;
+
+  background:rgba(3,18,29,.78);
+
+  border:1px solid #28617d;
+
+  backdrop-filter:blur(18px);
+
+  box-shadow:
+    0 10px 30px #0008;
+}
+
+.dot{
+  width:15px;
+  height:15px;
+  border-radius:50%;
+
+  background:#00ed91;
+
+  box-shadow:
+    0 0 17px #00ed91;
+}
+
+.statusMain{
+  font-size:14px;
+  font-weight:800;
+}
+
+.statusSub{
+  margin-top:2px;
+  font-size:11px;
+  color:#a8b7c0;
+}
+
+
+/* =========================
+   FARE CARD
+========================= */
+
+.fareCard{
+  position:absolute;
+
+  top:12.7%;
+  left:17.2%;
+
+  width:65.6%;
+  height:245px;
+
+  overflow:hidden;
+
+  text-align:center;
+
+  border-radius:40px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(4,7,17,.94),
+      rgba(16,9,22,.86)
+    );
+
+  border:2px solid #ff2432;
+
+  box-shadow:
+    0 0 28px #ff182e99,
+    0 20px 60px #000b,
+    inset 0 1px #fff2;
+
+  backdrop-filter:blur(20px);
+}
+
+.fareCard:before{
+  content:"";
+
+  position:absolute;
+
+  top:-2px;
+  left:10%;
+  right:10%;
+
+  height:4px;
+
+  background:#ff2935;
+
+  box-shadow:
+    0 0 18px #ff2935,
+    0 0 40px #ff2935;
+}
+
+.fareLabel{
+  margin-top:25px;
+
+  color:#bdd2e2;
+
+  font-size:18px;
+  font-weight:700;
+}
+
+.fareValue{
+  margin-top:5px;
+
+  font-size:66px;
+  line-height:1;
+
+  font-weight:950;
+
+  letter-spacing:-2px;
+}
+
+
+/* =========================
+   MOUNTAINS
+========================= */
+
+.mountainArt{
+  position:absolute;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  height:115px;
+
+  opacity:.42;
+}
+
+.mountainArt span{
+  position:absolute;
+
+  bottom:-25px;
+
+  width:0;
+  height:0;
+
+  border-left:75px solid transparent;
+  border-right:75px solid transparent;
+  border-bottom:105px solid #d50018;
+}
+
+.mountainArt span:nth-child(1){
+  left:-25px;
+}
+
+.mountainArt span:nth-child(2){
+  left:65px;
+  transform:scale(.72);
+}
+
+.mountainArt span:nth-child(3){
+  right:65px;
+  transform:scale(.8);
+}
+
+.mountainArt span:nth-child(4){
+  right:-35px;
+  transform:scale(1.08);
+}
+
+
+/* =========================
+   STUDENT
+========================= */
+
+.student{
+  position:absolute;
+
+  left:15%;
+  right:15%;
+  bottom:13px;
+
+  height:62px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:8px 16px;
+
+  border-radius:27px;
+
+  background:rgba(7,22,34,.92);
+
+  border:1px solid #36566b;
+
+  box-shadow:
+    inset 0 1px #fff1;
+}
+
+.studentLeft{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-align:left;
+}
+
+.cap{
+  font-size:28px;
+}
+
+.studentTitle{
+  font-size:16px;
+}
+
+.studentPrice{
+  margin-top:2px;
+
+  color:#00ef9b;
+
+  font-size:20px;
+  font-weight:900;
+}
+
+
+/* Toggle */
+
+.switch{
+  position:relative;
+
+  width:64px;
+  height:34px;
+}
+
+.switch input{
+  display:none;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+
+  border-radius:30px;
+
+  background:#34434e;
+}
+
+.slider:before{
+  content:"";
+
+  position:absolute;
+
+  width:26px;
+  height:26px;
+
+  left:4px;
+  top:4px;
+
+  border-radius:50%;
+
+  background:white;
+
+  transition:.25s;
+}
+
+.switch input:checked+.slider{
+  background:#00d68e;
+
+  box-shadow:
+    0 0 18px #00d68e66;
+}
+
+.switch input:checked+.slider:before{
+  transform:translateX(30px);
+}
+
+
+/* =========================
+   SIDE BUTTONS
+========================= */
+
+.side{
+  position:absolute;
+
+  right:2.6%;
+  top:19.2%;
+
+  display:flex;
+  flex-direction:column;
+
+  gap:18px;
+}
+
+.sideBtn{
+  width:92px;
+  height:92px;
+
+  border-radius:27px;
+
+  border:1px solid #36728d;
+
+  background:rgba(3,15,25,.78);
+
+  backdrop-filter:blur(18px);
+
+  box-shadow:
+    0 12px 30px #0009;
+
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:4px;
+
+  font-weight:800;
+}
+
+.sideBtn .ico{
+  font-size:29px;
+}
+
+.sideBtn small{
+  font-size:12px;
+}
+
+.sideBtn:active{
+  transform:scale(.95);
+}
+
+
+/* =========================
+   MAP LABELS
+========================= */
+
+.leaflet-place-label{
+  background:transparent!important;
+  border:0!important;
+}
+
+.place-label{
+  display:inline-block;
+
+  padding:5px 9px;
+
+  border-radius:10px;
+
+  background:rgba(2,10,17,.72);
+
+  border:1px solid rgba(255,255,255,.18);
+
+  color:white;
+
+  font-size:12px;
+  font-weight:800;
+
+  line-height:1.15;
+
+  text-align:center;
+
+  white-space:nowrap;
+
+  text-shadow:
+    0 1px 3px #000;
+
+  box-shadow:
+    0 3px 12px rgba(0,0,0,.55);
+
+  backdrop-filter:blur(5px);
+}
+
+
+/* Everest Summit special label */
+
+.everest-label{
+  display:inline-block;
+
+  padding:7px 11px;
+
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(180,0,15,.92),
+      rgba(70,5,12,.88)
+    );
+
+  border:1px solid #ff5963;
+
+  color:white;
+
+  font-size:12px;
+
+  font-weight:900;
+
+  line-height:1.15;
+
+  text-align:center;
+
+  white-space:nowrap;
+
+  box-shadow:
+    0 4px 18px rgba(0,0,0,.7),
+    0 0 14px rgba(255,30,45,.45);
+
+  backdrop-filter:blur(7px);
+}
+
+.everest-label small{
+  display:block;
+
+  margin-top:3px;
+
+  color:#ffe0e3;
+
+  font-size:9px;
+}
+
+.place-label small{
+  display:block;
+
+  margin-top:2px;
+
+  color:#dce8ef;
+
+  font-size:9px;
+}
+
+
+/* =========================
+   LIVE BUS MARKER
+========================= */
+
+.live-bus-marker{
+  background:transparent!important;
+  border:0!important;
+}
+
+.bus-icon{
+  font-size:40px;
+
+  filter:
+    drop-shadow(0 3px 5px #000)
+    drop-shadow(0 0 8px #ff2333);
+
+  animation:
+    busPulse 1.5s infinite;
+}
+
+@keyframes busPulse{
+  0%,100%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.08);
+  }
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+  position:absolute;
+
+  left:4.5%;
+  top:61%;
+
+  width:45%;
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  padding:16px 18px;
+
+  border-radius:25px;
+
+  background:rgba(3,15,25,.80);
+
+  border:1px solid #00a9df;
+
+  backdrop-filter:blur(18px);
+
+  box-shadow:
+    0 12px 32px #0009;
+}
+
+.stat{
+  display:flex;
+  align-items:center;
+
+  gap:9px;
+}
+
+.stat:first-child{
+  padding-right:12px;
+
+  border-right:1px solid #ffffff25;
+}
+
+.stat:last-child{
+  padding-left:12px;
+}
+
+.statIcon{
+  font-size:25px;
+}
+
+.statLabel{
+  color:#bdccd5;
+  font-size:11px;
+}
+
+.statVal{
+  margin-top:3px;
+
+  font-size:22px;
+  font-weight:900;
+}
+
+
+/* =========================
+   COMPASS
+========================= */
+
+.compass{
+  position:absolute;
+
+  right:4.5%;
+  top:57%;
+
+  width:76px;
+  height:76px;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:50%;
+
+  background:rgba(3,14,23,.84);
+
+  border:1px solid #486779;
+
+  box-shadow:
+    0 12px 30px #0009;
+
+  font-size:27px;
+}
+
+
+/* =========================
+   BOTTOM PANEL
+========================= */
+
+.bottom{
+  position:absolute;
+
+  left:3.2%;
+  right:3.2%;
+  bottom:1.2%;
+
+  height:27%;
+
+  min-height:260px;
+
+  padding:18px 28px;
+
+  border-radius:36px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(2,12,20,.96),
+      rgba(5,16,25,.90)
+    );
+
+  border:1px solid #3b6075;
+
+  box-shadow:
+    0 -15px 55px #000b,
+    inset 0 1px #fff1;
+
+  backdrop-filter:blur(22px);
+}
+
+.routeHead{
+  display:flex;
+  justify-content:space-between;
+
+  font-size:15px;
+  font-weight:800;
+}
+
+.routeTrack{
+  height:5px;
+
+  margin:11px 0 16px;
+
+  border-radius:8px;
+
+  background:#314a5d;
+}
+
+.routeProgress{
+  width:0;
+
+  height:100%;
+
+  border-radius:8px;
+
+  background:#ff2533;
+
+  box-shadow:
+    0 0 10px #ff2533;
+
+  transition:.3s;
+}
+
+
+/* Next fare */
+
+.nextBox{
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:15px;
+
+  padding:15px 18px;
+
+  border-radius:21px;
+
+  background:rgba(4,16,27,.86);
+
+  border:1px solid #304d60;
+}
+
+.nextTitle{
+  color:#bdd6e9;
+  font-size:14px;
+}
+
+.nextValue{
+  margin-top:3px;
+
+  font-size:23px;
+  font-weight:900;
+}
+
+.miniTrack{
+  height:5px;
+
+  margin-top:10px;
+
+  border-radius:8px;
+
+  background:#314a5d;
+}
+
+.miniFill{
+  width:0;
+
+  height:100%;
+
+  border-radius:8px;
+
+  background:#ff2533;
+}
+
+.table{
+  padding-left:18px;
+
+  border-left:1px solid #61717d;
+
+  color:#c8d4dc;
+
+  font-size:12px;
+
+  line-height:1.65;
+}
+
+
+/* Buttons */
+
+.controls{
+  display:grid;
+
+  grid-template-columns:
+    1fr 145px 145px;
+
+  gap:9px;
+
+  margin-top:11px;
+}
+
+.ctrl{
+  height:57px;
+
+  border-radius:20px;
+
+  border:1px solid #41677f;
+
+  background:#081825;
+
+  font-size:15px;
+  font-weight:900;
+}
+
+.pause{
+  background:
+    linear-gradient(
+      135deg,
+      #ff2633,
+      #ca0010
+    );
+
+  border-color:#ff5b64;
+
+  box-shadow:
+    0 7px 27px #ff203855,
+    inset 0 1px #fff5;
+}
+
+.footer{
+  position:absolute;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  text-align:center;
+
+  color:#e8eef2;
+
+  font-size:12px;
+
+  font-style:italic;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px){
+
+  .top{
+    top:12px;
+    left:14px;
+    right:14px;
+  }
+
+  .logo{
+    width:48px;
+    height:48px;
+
+    border-radius:15px;
+
+    font-size:25px;
+  }
+
+  .brandTitle{
+    font-size:18px;
+  }
+
+  .brandSub{
+    font-size:10px;
+  }
+
+  .status{
+    padding:8px 10px;
+  }
+
+  .dot{
+    width:10px;
+    height:10px;
+  }
+
+  .statusMain{
+    font-size:10px;
+  }
+
+  .statusSub{
+    font-size:8px;
+  }
+
+
+  .fareCard{
+    top:12%;
+
+    left:17%;
+    width:66%;
+
+    height:180px;
+
+    border-radius:25px;
+  }
+
+  .fareLabel{
+    margin-top:17px;
+
+    font-size:12px;
+  }
+
+  .fareValue{
+    font-size:45px;
+  }
+
+  .student{
+    left:13%;
+    right:13%;
+
+    bottom:9px;
+
+    height:48px;
+
+    padding:5px 9px;
+
+    border-radius:21px;
+  }
+
+  .cap{
+    font-size:20px;
+  }
+
+  .studentTitle{
+    font-size:11px;
+  }
+
+  .studentPrice{
+    font-size:15px;
+  }
+
+  .switch{
+    width:43px;
+    height:24px;
+  }
+
+  .slider:before{
+    width:18px;
+    height:18px;
+  }
+
+  .switch input:checked+.slider:before{
+    transform:translateX(19px);
+  }
+
+
+  .side{
+    right:2.3%;
+    top:18%;
+
+    gap:10px;
+  }
+
+  .sideBtn{
+    width:59px;
+    height:59px;
+
+    border-radius:18px;
+  }
+
+  .sideBtn .ico{
+    font-size:20px;
+  }
+
+  .sideBtn small{
+    font-size:8px;
+  }
+
+
+  .stats{
+    top:auto;
+
+    bottom:28%;
+
+    left:5%;
+
+    width:45%;
+
+    padding:10px;
+
+    border-radius:19px;
+  }
+
+  .statIcon{
+    font-size:19px;
+  }
+
+  .statLabel{
+    font-size:8px;
+  }
+
+  .statVal{
+    font-size:15px;
+  }
+
+
+  .compass{
+    top:auto;
+
+    bottom:29%;
+
+    width:52px;
+    height:52px;
+
+    font-size:18px;
+  }
+
+
+  .bottom{
+    left:3%;
+    right:3%;
+
+    bottom:5px;
+
+    height:28%;
+
+    min-height:205px;
+
+    padding:11px 12px;
+
+    border-radius:24px;
+  }
+
+  .routeHead{
+    font-size:10px;
+  }
+
+  .routeTrack{
+    height:4px;
+
+    margin:7px 0 9px;
+  }
+
+  .nextBox{
+    padding:9px 10px;
+
+    border-radius:15px;
+
+    gap:8px;
+  }
+
+  .nextTitle{
+    font-size:9px;
+  }
+
+  .nextValue{
+    font-size:17px;
+  }
+
+  .table{
+    padding-left:9px;
+
+    font-size:8px;
+  }
+
+  .miniTrack{
+    height:4px;
+
+    margin-top:6px;
+  }
+
+
+  .controls{
+    grid-template-columns:
+      1fr 67px 76px;
+
+    gap:5px;
+
+    margin-top:7px;
+  }
+
+  .ctrl{
+    height:42px;
+
+    border-radius:14px;
+
+    font-size:9px;
+  }
+
+  .footer{
+    display:none;
+  }
+
+  .place-label{
+    padding:4px 6px;
+    border-radius:8px;
+    font-size:9px;
+  }
+
+  .place-label small{
+    font-size:7px;
+  }
+
+  .everest-label{
+    padding:5px 7px;
+    border-radius:8px;
+    font-size:8px;
+  }
+
+  .everest-label small{
+    font-size:6px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MAP -->
+<div id="map"></div>
+
+
+<!-- FIXED UI -->
+<div class="phone">
+
+
+<!-- HEADER -->
+
+<div class="top">
+
+  <div class="brand">
+
+    <div class="logo">
+      🚌
+    </div>
+
+    <div>
+
+      <div class="brandTitle">
+        KTM Fare Meter
+      </div>
+
+      <div class="brandSub">
+        Smart • Fair • Kathmandu
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="status">
+
+    <div
+      class="dot"
+      id="dot">
+    </div>
+
+    <div>
+
+      <div
+        class="statusMain"
+        id="status">
+        GPS Ready
+      </div>
+
+      <div class="statusSub">
+        Offline Ready
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- FARE -->
+
+<div class="fareCard">
+
+  <div class="mountainArt">
+
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+
+  </div>
+
+
+  <div class="fareLabel">
+    Current Fare
+  </div>
+
+
+  <div
+    class="fareValue"
+    id="fare">
+    Rs 0.00
+  </div>
+
+
+  <div class="student">
+
+    <div class="studentLeft">
+
+      <div class="cap">
+        🎓
+      </div>
+
+      <div>
+
+        <div class="studentTitle">
+          Student Fare
+        </div>
+
+        <div
+          class="studentPrice"
+          id="studentFare">
+          Rs 0.00
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <label class="switch">
+
+      <input
+        type="checkbox"
+        id="studentToggle"
+        checked>
+
+      <span class="slider"></span>
+
+    </label>
+
+  </div>
+
+</div>
+
+
+<!-- SIDE -->
+
+<div class="side">
+
+  <button
+    class="sideBtn"
+    id="satBtn">
+
+    <div class="ico">
+      🛰️
+    </div>
+
+    <small id="satText">
+      Satellite
+    </small>
+
+  </button>
+
+
+  <button
+    class="sideBtn"
+    id="locBtn">
+
+    <div class="ico">
+      🎯
+    </div>
+
+    <small>
+      Locate Me
+    </small>
+
+  </button>
+
+</div>
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+  <div class="stat">
+
+    <div class="statIcon">
+      ⚡
+    </div>
+
+    <div>
+
+      <div class="statLabel">
+        Speed
+      </div>
+
+      <div
+        class="statVal"
+        id="speed">
+        0 km/h
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="stat">
+
+    <div class="statIcon">
+      📍
+    </div>
+
+    <div>
+
+      <div class="statLabel">
+        Distance
+      </div>
+
+      <div
+        class="statVal"
+        id="distance">
+        0 m
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="compass">
+  🧭
+</div>
+
+
+<!-- BOTTOM -->
+
+<div class="bottom">
+
+  <div class="routeHead">
+
+    <span>
+      📍 Thamel
+    </span>
+
+    <span>
+      📍 Patan
+    </span>
+
+  </div>
+
+
+  <div class="routeTrack">
+
+    <div
+      class="routeProgress"
+      id="routeProgress">
+    </div>
+
+  </div>
+
+
+  <div class="nextBox">
+
+    <div>
+
+      <div class="nextTitle">
+        🛣️ &nbsp;Next Fare Change
+      </div>
+
+      <div
+        class="nextValue"
+        id="next">
+        50 m
+      </div>
+
+      <div class="miniTrack">
+
+        <div
+          class="miniFill"
+          id="miniFill">
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="table">
+
+      <div>
+        0 – 5 km &nbsp; Rs 24.00
+      </div>
+
+      <div>
+        5 – 10 km &nbsp; Rs 33.00
+      </div>
+
+      <div>
+        10 – 15 km &nbsp; Rs 39.00
+      </div>
+
+      <div>
+        15 – 20 km &nbsp; Rs 44.00
+      </div>
+
+      <div>
+        20+ km &nbsp;&nbsp;&nbsp; Rs 50.00
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="controls">
+
+    <button
+      class="ctrl pause"
+      id="startBtn">
+
+      ▶ &nbsp;Start Ride
+
+    </button>
+
+
+    <button
+      class="ctrl"
+      id="resetBtn">
+
+      ↻ &nbsp;Reset
+
+    </button>
+
+
+    <button
+      class="ctrl"
+      id="studentBtn">
+
+      🎓 &nbsp;Student
+
+    </button>
+
+  </div>
+
+
+  <div class="footer">
+
+    — Ride Smart • Support Local • Kathmandu —
+
+  </div>
+
+</div>
+
+</div>
+
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<script>
+
+/* =========================
+   MAP
+========================= */
+
+const map =
+L.map(
+  "map",
+  {
+    zoomControl:false,
+    attributionControl:false
+  }
+)
+.setView(
+  [27.7172,85.3240],
+  13
+);
+
+
+/* Street */
+
+const street =
+L.tileLayer(
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {
+    maxZoom:19
+  }
+);
+
+
+/* Satellite */
+
+const satellite =
+L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  {
+    maxZoom:19
+  }
+)
+.addTo(map);
+
+
+let satelliteMode=true;
+
+
+/* =========================
+   MAP LABEL FUNCTION
+========================= */
+
+function addPlace(
+  lat,
+  lon,
+  english,
+  nepali,
+  emoji=""
+){
+
+  const text =
+    emoji +
+    " " +
+    english +
+    "<small>" +
+    nepali +
+    "</small>";
+
+  return L.marker(
+    [lat,lon],
+    {
+      interactive:false,
+      keyboard:false,
+      zIndexOffset:200,
+
+      icon:
+        L.divIcon({
+          className:"leaflet-place-label",
+
+          html:
+            `<div class="place-label">
+              ${text}
+             </div>`,
+
+          iconSize:null,
+          iconAnchor:[0,0]
+        })
+    }
+  ).addTo(map);
+}
+
+
+/* =========================
+   KATHMANDU MAP PLACES
+========================= */
+
+addPlace(
+  27.7149,
+  85.2907,
+  "Swayambhunath",
+  "स्वयम्भूनाथ",
+  "🛕"
+);
+
+addPlace(
+  27.7158,
+  85.3125,
+  "Thamel",
+  "ठमेल"
+);
+
+addPlace(
+  27.7048,
+  85.3077,
+  "Durbar Square",
+  "दरबार क्षेत्र",
+  "🛕"
+);
+
+addPlace(
+  27.6947,
+  85.3147,
+  "Tripureshwor",
+  "त्रिपुरेश्वर"
+);
+
+addPlace(
+  27.7172,
+  85.3240,
+  "Kathmandu",
+  "काठमाडौं"
+);
+
+addPlace(
+  27.6730,
+  85.3250,
+  "Patan",
+  "ललितपुर"
+);
+
+
+/* =========================
+   EVEREST SUMMIT
+========================= */
+
+/*
+  Map-bound label.
+  It moves/zooms with the map.
+*/
+
+const everestIcon =
+  L.divIcon({
+
+    className:"leaflet-place-label",
+
+    html:
+      `<div class="everest-label">
+        🎓 Everest Summit Coaching Classes
+        <small>एभरेस्ट समिट कोचिङ क्लासेस</small>
+      </div>`,
+
+    iconSize:null,
+
+    iconAnchor:[0,0]
+  });
+
+
+const everestMarker =
+  L.marker(
+    [27.6850,85.3450],
+    {
+      interactive:false,
+      keyboard:false,
+      zIndexOffset:500,
+      icon:everestIcon
+    }
+  )
+  .addTo(map);
+
+
+/* =========================
+   GPS VARIABLES
+========================= */
+
+let watch=null;
+
+let last=null;
+
+let total=0;
+
+let points=[];
+
+let marker=null;
+
+let line=null;
+
+let running=false;
+
+
+/* =========================
+   ELEMENT
+========================= */
+
+const $ =
+  id =>
+  document.getElementById(id);
+
+
+/* =========================
+   FARE
+========================= */
+
+function getFare(steps){
+
+  if(steps<=100)
+    return steps * 0.24;
+
+  if(steps<=200)
+    return 24 + (steps-100) * 0.09;
+
+  if(steps<=300)
+    return 33 + (steps-200) * 0.06;
+
+  if(steps<=400)
+    return 39 + (steps-300) * 0.05;
+
+  return 50;
+}
+
+
+/* =========================
+   UPDATE UI
+========================= */
+
+function update(){
+
+  const steps =
+    Math.floor(total / 50);
+
+  const normal =
+    getFare(steps);
+
+  const student =
+    normal * 0.55;
+
+
+  $("fare").textContent =
+    "Rs " + normal.toFixed(2);
+
+  $("studentFare").textContent =
+    "Rs " + student.toFixed(2);
+
+
+  if(total < 1000){
+
+    $("distance").textContent =
+      Math.round(total) + " m";
+
+  }else{
+
+    $("distance").textContent =
+      (total/1000).toFixed(2) + " km";
+
+  }
+
+
+  if(steps >= 400){
+
+    $("next").textContent =
+      "MAX";
+
+  }else{
+
+    $("next").textContent =
+      Math.ceil(50-(total%50)) + " m";
+
+  }
+
+
+  $("miniFill").style.width =
+    ((total%50)/50*100) + "%";
+
+
+  $("routeProgress").style.width =
+    Math.min(
+      total/5000*100,
+      100
+    ) + "%";
+
+}
+
+
+/* =========================
+   GPS SUCCESS
+========================= */
+
+function gpsSuccess(position){
+
+  const lat =
+    position.coords.latitude;
+
+  const lon =
+    position.coords.longitude;
+
+  const accuracy =
+    position.coords.accuracy || 999;
+
+
+  if(accuracy > 80){
+
+    $("status").textContent =
+      "Weak GPS";
+
+    $("dot").style.background =
+      "#ffb000";
+
+    $("dot").style.boxShadow =
+      "0 0 17px #ffb000";
+
+    return;
+  }
+
+
+  const current = {
+    lat:lat,
+    lon:lon
+  };
+
+
+  /* FIRST GPS POINT */
+
+  if(!last){
+
+    last = current;
+
+    points = [
+      [lat,lon]
+    ];
+
+
+    map.flyTo(
+      [lat,lon],
+      17,
+      {
+        duration:1
+      }
+    );
+
+
+    marker =
+      L.marker(
+        [lat,lon],
+        {
+          icon:
+            L.divIcon({
+
+              className:
+                "live-bus-marker",
+
+              html:
+                `<div class="bus-icon">🚌</div>`,
+
+              iconSize:[45,45],
+
+              iconAnchor:[22,22]
+
+            })
+        }
+      )
+      .addTo(map);
+
+
+    line =
+      L.polyline(
+        points,
+        {
+          color:"#ff2633",
+          weight:5,
+          opacity:.9
+        }
+      )
+      .addTo(map);
+
+  }else{
+
+    const d =
+      distanceBetween(
+        last,
+        current
+      );
+
+
+    /* Ignore GPS jumps */
+
+    if(d > 150){
+
+      $("status").textContent =
+        "GPS Jump Ignored";
+
+      return;
+    }
+
+
+    /* Ignore tiny GPS drift */
+
+    if(d < 8){
+
+      last = current;
+
+    }else{
+
+      if(running){
+
+        total += d;
+
+        points.push([
+          lat,
+          lon
+        ]);
+
+        line.setLatLngs(points);
+      }
+
+      last = current;
+
+    }
+
+
+    marker.setLatLng([
+      lat,
+      lon
+    ]);
+
+  }
+
+
+  if(position.coords.speed != null &&
+     position.coords.speed >= 0){
+
+    $("speed").textContent =
+      (position.coords.speed * 3.6)
+      .toFixed(1) + " km/h";
+
+  }
+
+
+  $("status").textContent =
+    running ? "GPS Tracking" : "GPS Ready";
+
+  $("dot").style.background =
+    "#00ed91";
+
+  $("dot").style.boxShadow =
+    "0 0 17px #00ed91";
+
+
+  update();
+
+}
+
+
+/* =========================
+   GPS ERROR
+========================= */
+
+function gpsError(error){
+
+  let message =
+    "GPS Error";
+
+  if(error.code === 1)
+    message = "GPS Permission Denied";
+
+  if(error.code === 2)
+    message = "Location Unavailable";
+
+  if(error.code === 3)
+    message = "GPS Timeout";
+
+
+  $("status").textContent =
+    message;
+
+  $("dot").style.background =
+    "#ff2633";
+
+  $("dot").style.boxShadow =
+    "0 0 17px #ff2633";
+}
+
+
+/* =========================
+   DISTANCE
+========================= */
+
+function distanceBetween(a,b){
+
+  const R = 6371000;
+
+  const p = Math.PI/180;
+
+  const dLat =
+    (b.lat-a.lat)*p;
+
+  const dLon =
+    (b.lon-a.lon)*p;
+
+  const x =
+
+    Math.sin(dLat/2)**2 +
+
+    Math.cos(a.lat*p) *
+
+    Math.cos(b.lat*p) *
+
+    Math.sin(dLon/2)**2;
+
+
+  return 2*R*
+
+    Math.atan2(
+      Math.sqrt(x),
+      Math.sqrt(1-x)
+    );
+
+}
+
+
+/* =========================
+   START GPS
+========================= */
+
+function startGPS(){
+
+  if(!navigator.geolocation){
+
+    $("status").textContent =
+      "GPS Not Supported";
+
+    return;
+
+  }
+
+
+  $("status").textContent =
+    "Requesting GPS...";
+
+
+  /* Trigger permission */
+
+  navigator.geolocation.getCurrentPosition(
+    gpsSuccess,
+    gpsError,
+    {
+      enableHighAccuracy:true,
+      maximumAge:1000,
+      timeout:15000
+    }
+  );
+
+
+  watch =
+    navigator.geolocation.watchPosition(
+      gpsSuccess,
+      gpsError,
+      {
+        enableHighAccuracy:true,
+        maximumAge:1000,
+        timeout:15000
+      }
+    );
+
+}
+
+
+/* =========================
+   STOP GPS
+========================= */
+
+function stopGPS(){
+
+  if(watch !== null){
+
+    navigator.geolocation.clearWatch(
+      watch
+    );
+
+    watch=null;
+
+  }
+
+}
+
+
+/* =========================
+   START BUTTON
+========================= */
+
+$("startBtn").addEventListener(
+  "click",
+  function(){
+
+    if(!running){
+
+      running=true;
+
+      $("startBtn").innerHTML =
+        "⏸ &nbsp;Pause Ride";
+
+      startGPS();
+
+    }else{
+
+      running=false;
+
+      $("startBtn").innerHTML =
+        "▶ &nbsp;Resume Ride";
+
+      $("status").textContent =
+        "Ride Paused";
+
+    }
+
+  }
+);
+
+
+/* =========================
+   RESET
+========================= */
+
+$("resetBtn").addEventListener(
+  "click",
+  function(){
+
+    stopGPS();
+
+    running=false;
+
+    last=null;
+
+    total=0;
+
+    points=[];
+
+
+    if(marker){
+
+      map.removeLayer(marker);
+
+      marker=null;
+
+    }
+
+
+    if(line){
+
+      map.removeLayer(line);
+
+      line=null;
+
+    }
+
+
+    $("speed").textContent =
+      "0 km/h";
+
+    $("distance").textContent =
+      "0 m";
+
+    $("status").textContent =
+      "GPS Ready";
+
+    $("dot").style.background =
+      "#00ed91";
+
+    $("dot").style.boxShadow =
+      "0 0 17px #00ed91";
+
+
+    $("startBtn").innerHTML =
+      "▶ &nbsp;Start Ride";
+
+
+    update();
+
+  }
+);
+
+
+/* =========================
+   STUDENT TOGGLE
+========================= */
+
+$("studentBtn").addEventListener(
+  "click",
+  function(){
+
+    $("studentToggle").checked =
+      !$("studentToggle").checked;
+
+  }
+);
+
+
+/* =========================
+   SATELLITE
+========================= */
+
+$("satBtn").addEventListener(
+  "click",
+  function(){
+
+    if(satelliteMode){
+
+      map.removeLayer(
+        satellite
+      );
+
+      street.addTo(map);
+
+      satelliteMode=false;
+
+      $("satText").textContent =
+        "Street";
+
+    }else{
+
+      map.removeLayer(
+        street
+      );
+
+      satellite.addTo(map);
+
+      satelliteMode=true;
+
+      $("satText").textContent =
+        "Satellite";
+
+    }
+
+  }
+);
+
+
+/* =========================
+   LOCATE ME
+========================= */
+
+$("locBtn").addEventListener(
+  "click",
+  function(){
+
+    if(!navigator.geolocation){
+
+      $("status").textContent =
+        "GPS Not Supported";
+
+      return;
+
+    }
+
+
+    $("status").textContent =
+      "Locating...";
+
+
+    navigator.geolocation.getCurrentPosition(
+      function(position){
+
+        const lat =
+          position.coords.latitude;
+
+        const lon =
+          position.coords.longitude;
+
+
+        map.flyTo(
+          [lat,lon],
+          17,
+          {
+            duration:1
+          }
+        );
+
+
+        if(marker){
+
+          marker.setLatLng([
+            lat,
+            lon
+          ]);
+
+        }
+
+
+        $("status").textContent =
+          "Location Found";
+
+      },
+      gpsError,
+      {
+        enableHighAccuracy:true,
+        maximumAge:1000,
+        timeout:15000
+      }
+    );
+
+  }
+);
+
+
+/* =========================
+   STUDENT CHECKBOX
+========================= */
+
+$("studentToggle").addEventListener(
+  "change",
+  function(){
+
+    update();
+
+  }
+);
+
+
+/* =========================
+   INITIAL
+========================= */
+
+update();
+
+</script>
+
+</body>
+</html>
